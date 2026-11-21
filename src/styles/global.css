@@ -1,0 +1,202 @@
+/* ─── Reset ──────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Design Tokens ──────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-primary:    #0a0a0f;
+  --bg-secondary:  #0f0f1a;
+  --bg-panel:      #12121f;
+  --bg-elevated:   #1a1a2e;
+  --bg-hover:      #1e1e35;
+  --bg-active:     #252545;
+
+  /* Accent colours */
+  --accent-cyan:    #00d4ff;
+  --accent-cyan-dim: #0097b8;
+  --accent-orange:  #ff6b35;
+  --accent-orange-dim: #b84c25;
+  --accent-green:   #00ff88;
+  --accent-green-dim: #00b860;
+  --accent-yellow:  #ffd700;
+  --accent-red:     #ff3355;
+  --accent-purple:  #9d4edd;
+
+  /* Text */
+  --text-primary:   #e0e0ff;
+  --text-secondary: #8888aa;
+  --text-muted:     #444466;
+  --text-disabled:  #2a2a44;
+
+  /* Borders */
+  --border:         #1e1e3f;
+  --border-bright:  #2e2e5f;
+
+  /* Typography */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Transitions */
+  --transition-fast: 100ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+/* Allow text selection inside inputs and data panels */
+input,
+textarea,
+[data-selectable] {
+  user-select: text;
+}
+
+/* ─── Scrollbars ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-bright);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ─── Typography Utilities ───────────────────────────────────────────────── */
+.font-mono {
+  font-family: var(--font-mono);
+}
+.text-cyan    { color: var(--accent-cyan); }
+.text-orange  { color: var(--accent-orange); }
+.text-green   { color: var(--accent-green); }
+.text-yellow  { color: var(--accent-yellow); }
+.text-red     { color: var(--accent-red); }
+.text-muted   { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+
+/* ─── Button Base ────────────────────────────────────────────────────────── */
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  transition: background var(--transition-fast), color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.btn-primary {
+  background: var(--accent-cyan);
+  color: #000;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+}
+.btn-primary:hover {
+  background: #33deff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+}
+.btn-primary:active {
+  background: var(--accent-cyan-dim);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-bright);
+  font-weight: 500;
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
+}
+.btn-secondary:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-cyan);
+  background: rgba(0, 212, 255, 0.05);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+}
+.btn-ghost:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ─── Panel ──────────────────────────────────────────────────────────────── */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─── App Root ───────────────────────────────────────────────────────────── */
+.app-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+}
