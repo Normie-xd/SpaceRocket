@@ -167,6 +167,32 @@ export function compute6DOFDerivative(
   const exitArea = 0.3 * rocket.referenceArea;
   const netThrustScalar = Math.max(0, thrustVacuum - Pa * exitArea) * (guidance.throttle || 1.0);
 
+  // Active guidance: align attitude with local gravity turn profile if targetPitchDeg is specified
+  let effectiveAtt = att;
+  if (guidance.targetPitchDeg !== undefined && rMag > 1000) {
+    const pitchRad = guidance.targetPitchDeg * rad;
+    const up = pos.normalize();
+    // Eastward local horizontal vector
+    const east = new Vector3D(0, 0, 1).cross(up);
+    const eastNorm = east.magnitude() > 1e-6 ? east.normalize() : new Vector3D(0, 1, 0);
+    // Target thrust vector direction
+    const targetDir = up.scale(Math.cos(pitchRad)).add(eastNorm.scale(Math.sin(pitchRad))).normalize();
+
+    // Rotate unit vector (1, 0, 0) into targetDir via quaternion
+    const v1 = new Vector3D(1, 0, 0);
+    const v2 = targetDir;
+    const dot = v1.dot(v2);
+    if (dot > 0.99999) {
+      effectiveAtt = Quaternion.identity();
+    } else if (dot < -0.99999) {
+      effectiveAtt = Quaternion.fromAxisAngle(new Vector3D(0, 0, 1), Math.PI);
+    } else {
+      const cross = v1.cross(v2);
+      const w = 1.0 + dot;
+      effectiveAtt = new Quaternion(w, cross.x, cross.y, cross.z).normalize();
+    }
+  }
+
   // Thrust vector in body coordinates (+X is rocket longitudinal nose direction)
   const thrustBody = new Vector3D(
     Math.cos(gimbalPitch) * Math.cos(gimbalYaw),
@@ -175,7 +201,7 @@ export function compute6DOFDerivative(
   ).scale(netThrustScalar);
 
   // Rotate thrust into inertial ECI frame
-  const fThrustECI = att.rotateVector(thrustBody);
+  const fThrustECI = effectiveAtt.rotateVector(thrustBody);
 
   // 3. Gravitational force
   const [gx, gy, gz] = computeGravityVectorJ2(pos.x, pos.y, pos.z);
@@ -263,6 +289,26 @@ export function step6DOF(
 
   const nextPacked = rk4Step(state.time, currentPacked, dt, f);
   const unpacked = unpackState(nextPacked);
+
+  // If guidance commanded an attitude alignment, maintain it in unpacked state
+  if (lastEval && guidance.targetPitchDeg !== undefined) {
+    const pitchRad = (guidance.targetPitchDeg || 0) * (Math.PI / 180.0);
+    const up = unpacked.pos.normalize();
+    const east = new Vector3D(0, 0, 1).cross(up);
+    const eastNorm = east.magnitude() > 1e-6 ? east.normalize() : new Vector3D(0, 1, 0);
+    const targetDir = up.scale(Math.cos(pitchRad)).add(eastNorm.scale(Math.sin(pitchRad))).normalize();
+
+    const v1 = new Vector3D(1, 0, 0);
+    const dot = v1.dot(targetDir);
+    if (dot > 0.99999) {
+      unpacked.att = Quaternion.identity();
+    } else if (dot < -0.99999) {
+      unpacked.att = Quaternion.fromAxisAngle(new Vector3D(0, 0, 1), Math.PI);
+    } else {
+      const cross = v1.cross(targetDir);
+      unpacked.att = new Quaternion(1.0 + dot, cross.x, cross.y, cross.z).normalize();
+    }
+  }
 
   // Prevent mass from going below dry mass
   unpacked.mass = Math.max(rocket.dryMass, unpacked.mass);
