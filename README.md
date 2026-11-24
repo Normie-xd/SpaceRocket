@@ -34,12 +34,12 @@ It is designed for:
 
 | Layer | Technology |
 |---|---|
-| Desktop Shell | Electron |
+| Desktop Shell | Tauri v2 (Rust backend) |
 | 3D Rendering | Three.js (custom GLSL shaders) |
 | UI Framework | React + Vite |
-| Language | TypeScript |
+| Language | TypeScript (Frontend) + Rust (Desktop Core) |
 | Physics | Custom engine (Web Workers, RK4 integrator) |
-| Database | SQLite (better-sqlite3) |
+| Storage | Native JSON document storage via Rust IPC |
 | State | Zustand |
 | Charts | Recharts |
 
@@ -50,6 +50,7 @@ It is designed for:
 ### Prerequisites
 - Node.js 20+
 - npm 10+
+- Rust 1.77+ & Cargo
 - Git
 
 ### Install & Run
@@ -58,10 +59,11 @@ npm install
 npm run dev
 ```
 
+> Or run the Vite frontend preview standalone: `npm run dev:vite`
+
 ### Build Installer
 ```bash
 npm run build
-npm run package
 ```
 
 ---

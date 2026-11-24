@@ -26,18 +26,19 @@ A standalone desktop application where users design custom rockets from real eng
 
 ## 🛠️ Tech Stack Decision
 
-### Why Electron + Three.js + TypeScript
+### Why Tauri v2 + Three.js + TypeScript + Rust
 
 | Layer | Technology | Rationale |
 |---|---|---|
-| **Desktop Shell** | **Electron.js** | Cross-platform, can bundle heavy assets, no browser memory cap, file I/O for saving rockets |
-| **3D Rendering** | **Three.js** (custom shaders) | Maximum control over rendering pipeline; we write our own GLSL shaders for exhaust plumes, atmospheric scattering, re-entry glow |
-| **UI Framework** | **React + Vite** (inside Electron) | Component-based panels for HUD, telemetry, rocket builder |
-| **Physics Engine** | **Custom TypeScript** running in **Web Workers** | We CANNOT use a generic physics engine — rocket physics (propulsion, orbital mechanics, atmospheric drag) requires domain-specific equations. Workers keep simulation non-blocking |
-| **Backend / Data** | **Node.js** (Electron main process) + **SQLite** via `better-sqlite3` | Save/load rocket designs, mission logs, telemetry recordings — no network required, fully offline |
-| **Math Library** | `mathjs` + custom vector/quaternion library | Orbital mechanics math, rotation matrices |
-| **Charts / Telemetry** | **Chart.js** or **Recharts** | Real-time telemetry graphs (altitude, velocity, acceleration, thrust, Mach, dynamic pressure) |
-| **Language** | **TypeScript** throughout | Safety for complex physics math, great IDE support |
+| **Desktop Shell** | **Tauri v2** | Ultra-lightweight (~10-15MB installer vs 150MB+ in Electron), low idle RAM (~30-80MB vs 300MB+), native OS WebView (WebView2 on Windows) |
+| **Backend Core** | **Rust (`src-tauri`)** | Fast, rock-solid memory safety for native file I/O, IPC commands, and high-performance system interactions |
+| **3D Rendering** | **Three.js** (custom shaders) | Maximum control over rendering pipeline; custom GLSL shaders for exhaust plumes, atmospheric scattering, re-entry glow |
+| **UI Framework** | **React + Vite** | Component-based panels for HUD, telemetry, rocket builder |
+| **Physics Engine** | **Custom TypeScript** running in **Web Workers** | Domain-specific aerospace equations (propulsion, orbital mechanics, atmospheric drag) off the main UI/render thread |
+| **Storage / Data** | **Portable JSON Documents via Rust IPC** | Safe file-system storage for rocket designs, mission logs, and telemetry recordings (%APPDATA%/SpaceRocket) — portable, human-readable, and easily shareable |
+| **Math Library** | Custom vector/quaternion math + aerospace formulas | 6-DOF equations of motion, rotation matrices, orbital mechanics |
+| **Charts / Telemetry** | **Recharts** | Real-time telemetry graphs (altitude, velocity, acceleration, thrust, Mach, dynamic pressure) |
+| **Language** | **TypeScript** (Frontend) + **Rust** (Desktop Core) | Type safety and blazing performance throughout |
 
 ---
 
@@ -102,18 +103,26 @@ This is where most engineering effort goes. Every model below is a real aerospac
 
 ```
 SpaceRocket/
-├── electron/                   # Electron main process (Node.js)
-│   ├── main.ts                 # App entry, window management
-│   ├── ipc/                    # IPC handlers (file I/O, DB queries)
-│   └── db/                     # SQLite database layer
-│       ├── schema.sql
-│       └── queries.ts
+├── src-tauri/                  # Tauri v2 Desktop & Native Backend (Rust)
+│   ├── Cargo.toml              # Rust crate manifest & dependencies
+│   ├── tauri.conf.json         # Tauri app configuration & permissions
+│   ├── build.rs                # Tauri build script
+│   ├── capabilities/           # Tauri v2 security & permission capability set
+│   └── src/
+│       ├── main.rs             # Tauri application entry point
+│       └── lib.rs              # Rust IPC commands (rocket storage, missions, exports)
 │
-├── src/                        # React frontend (Vite)
-│   ├── App.tsx                 # Root component, view routing
+├── src/                        # React frontend (Vite + TypeScript)
+│   ├── App.tsx                 # Root component, view routing & splash navigation
+│   ├── main.tsx                # React DOM render entry
+│   ├── env.d.ts                # Ambient type definitions & shader modules
+│   ├── lib/
+│   │   └── storage.ts          # Type-safe wrapper around Tauri IPC commands
+│   ├── styles/
+│   │   └── global.css          # Dark Mission Control theme & tokens
 │   ├── views/
 │   │   ├── RocketBuilder/      # Drag-and-drop rocket designer
-│   │   ├── SimulationView/     # 3D viewport + live telemetry
+│   │   ├── SimulationView/     # 3D viewport + live telemetry HUD
 │   │   ├── AnalysisView/       # Post-flight data & graphs
 │   │   └── DocumentationView/  # Integrated guide / spec library
 │   │
@@ -141,7 +150,7 @@ SpaceRocket/
 │   │   └── thermal/
 │   │       └── HeatModel.ts
 │   │
-│   ├── renderer/               # Three.js 3D rendering
+│   ├── scene/                  # Three.js 3D rendering
 │   │   ├── SceneManager.ts     # Scene setup, lighting, camera
 │   │   ├── Earth.ts            # Photorealistic Earth (PBR textures + atmosphere shader)
 │   │   ├── RocketMesh.ts       # Procedural rocket geometry from parameters
@@ -149,24 +158,20 @@ SpaceRocket/
 │   │   ├── TrajectoryLine.ts   # Orbital path visualization
 │   │   ├── ReentryEffect.ts    # Heat shield glow shader
 │   │   └── shaders/            # GLSL source files
-│   │       ├── atmosphere.vert/frag
-│   │       ├── exhaust.vert/frag
-│   │       └── reentry.vert/frag
 │   │
-│   └── store/                  # State management (Zustand)
-│       ├── rocketStore.ts      # Active rocket design
-│       ├── simulationStore.ts  # Sim state, telemetry buffer
-│       └── missionStore.ts     # Mission parameters
+│   ├── store/                  # State management (Zustand)
+│   │   ├── rocketStore.ts      # Active rocket design
+│   │   ├── simulationStore.ts  # Sim state, telemetry buffer
+│   │   ├── missionStore.ts     # Celestial bodies & launch sites
+│   │   └── settingsStore.ts    # Unit toggle, fidelity, graphics settings
+│   │
+│   └── types/                  # Domain TypeScript definitions
+│       ├── rocket.ts           # Component parameters & materials
+│       ├── simulation.ts       # 40+ telemetry parameters & events
+│       └── celestial.ts        # Solar system physical constants
 │
-├── assets/
-│   ├── textures/               # Earth, Moon surface maps (NASA Blue Marble)
-│   ├── hdri/                   # Space skybox (Poly Haven CC0)
-│   └── fonts/                  # UI fonts
-│
-├── docs/                       # In-app documentation system
-│   ├── guide/                  # Engineering guide (Markdown)
-│   └── specs/                  # Pre-built rocket specifications (JSON)
-│
+├── vite.config.ts              # Vite configuration (Tauri-tuned)
+├── tsconfig.json               # TypeScript configuration
 └── package.json
 ```
 
