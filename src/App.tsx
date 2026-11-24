@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { RocketBuilderView } from './views/RocketBuilder/RocketBuilderView'
 
 type View = 'splash' | 'builder' | 'simulation' | 'analysis' | 'docs'
 
@@ -8,9 +9,13 @@ function App(): JSX.Element {
   return (
     <div className="app-root">
       {view === 'splash' && <SplashScreen onNavigate={setView} />}
-      {/* Views implemented in Phase 3+ */}
-      {view === 'builder' && <Placeholder title="Rocket Builder" onBack={() => setView('splash')} />}
-      {view === 'simulation' && <Placeholder title="Simulation" onBack={() => setView('splash')} />}
+      {view === 'builder' && (
+        <RocketBuilderView
+          onBack={() => setView('splash')}
+          onLaunch={() => setView('simulation')}
+        />
+      )}
+      {view === 'simulation' && <Placeholder title="Simulation" onBack={() => setView('builder')} />}
       {view === 'analysis' && <Placeholder title="Analysis" onBack={() => setView('splash')} />}
       {view === 'docs' && <Placeholder title="Documentation" onBack={() => setView('splash')} />}
     </div>
