@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { RocketBuilderView } from './views/RocketBuilder/RocketBuilderView'
+import { SimulationView } from './views/SimulationView/SimulationView'
 
 type View = 'splash' | 'builder' | 'simulation' | 'analysis' | 'docs'
 
@@ -15,7 +16,7 @@ function App(): JSX.Element {
           onLaunch={() => setView('simulation')}
         />
       )}
-      {view === 'simulation' && <Placeholder title="Simulation" onBack={() => setView('builder')} />}
+      {view === 'simulation' && <SimulationView onBack={() => setView('builder')} />}
       {view === 'analysis' && <Placeholder title="Analysis" onBack={() => setView('splash')} />}
       {view === 'docs' && <Placeholder title="Documentation" onBack={() => setView('splash')} />}
     </div>
