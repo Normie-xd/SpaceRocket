@@ -203,14 +203,3 @@ export type EngineCycle =
   | 'pressurant'       // pressure-fed
   | 'electric'         // electric pump-fed
   | 'solid'
-
-// ─── Re-export convenience ────────────────────────────────────────────────────
-export type {
-  NoseConeParams,
-  BodyTubeParams,
-  PropellantTankParams,
-  EngineParams,
-  FinParams,
-  FairingParams,
-  PayloadParams
-}

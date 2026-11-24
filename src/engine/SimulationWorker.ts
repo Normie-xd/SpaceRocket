@@ -278,13 +278,8 @@ self.onmessage = (e: MessageEvent) => {
   }
 };
 
-let lastTick = performance.now();
 function runLoop(): void {
   if (!isRunning) return;
-
-  const now = performance.now();
-  const elapsed = (now - lastTick) / 1000.0;
-  lastTick = now;
 
   // Number of sub-steps based on timeScale
   const stepsToExecute = Math.min(32, Math.round(timeScale));

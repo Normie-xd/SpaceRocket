@@ -12,7 +12,7 @@
 import { computeTsiolkovskyDeltaV } from '../propulsion/Engine';
 import { calculateBarrowmanStability, type StabilityReport } from '../aerodynamics/Stability';
 import { G0 } from '../atmosphere/ISA';
-import type { RocketDesign, Engine, PropellantTank, Separator } from '../../types/rocket';
+import type { RocketDesign, Engine, PropellantTank } from '../../types/rocket';
 
 export interface StagePerformance {
   stageIndex: number;

@@ -9,7 +9,7 @@
  * - Fairing jettison when exiting dense atmosphere (e.g. altitude > 100 km)
  */
 
-import type { RocketDesign, RocketComponent, PropellantTank, Engine, Separator, Fairing } from '../../types/rocket';
+import type { RocketDesign, PropellantTank, Engine, Separator, Fairing } from '../../types/rocket';
 
 export interface StageDefinition {
   stageIndex: number;          // 0 = booster / first stage, 1 = second stage, etc.

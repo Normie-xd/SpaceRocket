@@ -13,7 +13,7 @@
  * - Margin < 0: Aerodynamically unstable (will tumble without active TVC gimbal control)
  */
 
-import type { RocketDesign, RocketComponent, NoseCone, Fin, BodyTube, PropellantTank, Engine } from '../../types/rocket';
+import type { RocketDesign, NoseCone, Fin, BodyTube, PropellantTank, Engine } from '../../types/rocket';
 
 export interface StabilityReport {
   centerOfMass: number;      // X_cg from nose tip (m)

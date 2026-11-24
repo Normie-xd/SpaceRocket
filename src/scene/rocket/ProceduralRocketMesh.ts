@@ -10,7 +10,7 @@
  */
 
 import * as THREE from 'three';
-import type { RocketDesign, NoseCone, BodyTube, PropellantTank, Engine, Fin, Fairing, Separator, Payload } from '../../types/rocket';
+import type { RocketDesign, NoseCone, BodyTube, PropellantTank, Engine, Fin, Fairing, Payload } from '../../types/rocket';
 
 export interface RocketMeshResult {
   group: THREE.Group;
@@ -64,8 +64,6 @@ export function buildProceduralRocketMesh(design: RocketDesign): RocketMeshResul
     (design.components[0].type === 'noseCone' || design.components[0].type === 'fairing' || design.components[0].type === 'payload');
 
   const orderedComponents = isTopDown ? [...design.components] : [...design.components].reverse();
-
-  let currentY = 0; // Cumulative height offset from base (stacked downwards or upwards)
 
   // First pass: compute total length so we center or place base at Y=0
   let totalLength = 0;

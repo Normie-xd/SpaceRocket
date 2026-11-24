@@ -6,7 +6,7 @@ interface PreflightDashboardProps {
 }
 
 export const PreflightDashboard: React.FC<PreflightDashboardProps> = ({ report }) => {
-  const { totalDeltaV, liftoffTWR, totalWetMass, totalDryMass, totalPropellantMass, stability, flightFeasibility } = report;
+  const { totalDeltaV, liftoffTWR, totalWetMass, totalPropellantMass, stability, flightFeasibility } = report;
 
   // LEO target: ~9,200 m/s (includes ~1,500 m/s gravity & aerodynamic drag losses)
   const leoTarget = 9200;

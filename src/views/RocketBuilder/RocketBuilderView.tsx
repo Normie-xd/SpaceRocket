@@ -5,7 +5,7 @@ import { ComponentInspector } from './ComponentInspector';
 import { PreflightDashboard } from './PreflightDashboard';
 import { computePreflightAnalysis } from '../../engine/analytics/PreflightAnalysis';
 import { ROCKET_PRESETS } from './RocketPresets';
-import type { RocketComponent, RocketDesign } from '../../types/rocket';
+import type { RocketDesign } from '../../types/rocket';
 
 interface RocketBuilderViewProps {
   onBack: () => void;

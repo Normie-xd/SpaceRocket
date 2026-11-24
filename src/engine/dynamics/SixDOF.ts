@@ -101,7 +101,7 @@ export function unpackState(arr: number[]): {
  * Evaluates the 14-dimension state derivative vector for 6-DOF rocket flight.
  */
 export function compute6DOFDerivative(
-  t: number,
+  _t: number,
   stateArr: number[],
   rocket: RocketPhysicalProperties,
   thrustVacuum: number,
@@ -231,7 +231,6 @@ export function compute6DOFDerivative(
   const totalTorqueZ = tauTVC_z;
 
   const I_pitch = Math.max(100, rocket.momentOfInertiaPitch);
-  const I_roll = Math.max(50, rocket.momentOfInertiaRoll);
 
   // Euler rotational equations of motion: domega/dt = I^-1 * (Torque - omega x (I * omega))
   const dOmegaX = 0; // Roll damped
@@ -279,7 +278,7 @@ export function step6DOF(
     state.mass
   );
 
-  let lastEval: ReturnType<typeof compute6DOFDerivative> | null = null;
+  let lastEval: any = null;
 
   const f = (t: number, y: number[]) => {
     const res = compute6DOFDerivative(t, y, rocket, thrustVacuum, massFlowRate, guidance, body);

@@ -1,14 +1,7 @@
 import { create } from 'zustand'
 import type {
   RocketDesign,
-  RocketComponent,
-  NoseConeParams,
-  BodyTubeParams,
-  PropellantTankParams,
-  EngineParams,
-  FinParams,
-  FairingParams,
-  PayloadParams
+  RocketComponent
 } from '../types/rocket'
 
 interface RocketStore {
@@ -76,7 +69,7 @@ export const useRocketStore = create<RocketStore>((set) => ({
             ...s.currentDesign,
             components: s.currentDesign.components.map((c) =>
               c.id === id
-                ? { ...c, parameters: { ...c.parameters, ...params } as typeof c.parameters }
+                ? ({ ...c, parameters: { ...c.parameters, ...params } } as RocketComponent)
                 : c
             ),
             updatedAt: new Date().toISOString()
