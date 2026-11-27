@@ -70,16 +70,23 @@ npm run build
 
 ## Development Phases
 
-- [x] **Phase 0** — Foundation & Scaffolding
-- [ ] **Phase 1** — Physics Engine Core (atmosphere, propulsion, Tsiolkovsky)
-- [ ] **Phase 2** — 6-DOF Simulation + Orbital Mechanics
-- [ ] **Phase 3** — Rocket Builder UI
-- [ ] **Phase 4** — 3D Renderer & Scene (Earth, sky, launch site)
-- [ ] **Phase 5** — Visual Effects (exhaust, re-entry, shockwave)
-- [ ] **Phase 6** — Live Simulation + Telemetry HUD
-- [ ] **Phase 7** — Documentation System
-- [ ] **Phase 8** — Post-Flight Analysis
-- [ ] **Phase 9** — Polish & Packaging
+- [x] **Phase 0** — Foundation & Tauri v2 Migration
+- [x] **Phase 1** — Physics Engine Core (atmosphere, propulsion, Tsiolkovsky)
+- [x] **Phase 2** — 6-DOF Simulation + Orbital Mechanics
+- [x] **Phase 3** — Rocket Builder UI
+- [x] **Phase 4** — 3D Renderer & Scene (Earth, sky, launch site)
+- [x] **Phase 5** — Visual Effects (exhaust, re-entry, shockwave)
+- [x] **Phase 6** — Live Simulation + Telemetry HUD
+- [x] **Phase 7** — Documentation System
+- [x] **Phase 8** — Post-Flight Analysis & Export
+- [x] **Phase 9** — Settings, Shortcuts & Polish
+
+## Project Documentation Links
+
+- [Completed Project Summary (SPACEROCKET_COMPLETED.md)](./SPACEROCKET_COMPLETED.md)
+- [System Architecture Blueprint (SpaceRocket_Blueprint.md)](./SpaceRocket_Blueprint.md)
+- [In-App Engineering Documentation Data (docsData.ts)](./src/views/DocumentationView/docsData.ts)
+- [In-App Documentation Browser (DocumentationView.tsx)](./src/views/DocumentationView/DocumentationView.tsx)
 
 ---
 

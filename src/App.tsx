@@ -2,15 +2,20 @@ import React, { useState } from 'react'
 import { RocketBuilderView } from './views/RocketBuilder/RocketBuilderView'
 import { SimulationView } from './views/SimulationView/SimulationView'
 import { DocumentationView } from './views/DocumentationView/DocumentationView'
+import { AnalysisView } from './views/AnalysisView/AnalysisView'
+import { SettingsModal } from './views/SettingsModal'
 
 type View = 'splash' | 'builder' | 'simulation' | 'analysis' | 'docs'
 
 function App(): JSX.Element {
   const [view, setView] = useState<View>('splash')
+  const [showSettings, setShowSettings] = useState<boolean>(false)
 
   return (
     <div className="app-root">
-      {view === 'splash' && <SplashScreen onNavigate={setView} />}
+      {view === 'splash' && (
+        <SplashScreen onNavigate={setView} onOpenSettings={() => setShowSettings(true)} />
+      )}
       {view === 'builder' && (
         <RocketBuilderView
           onBack={() => setView('splash')}
@@ -18,8 +23,10 @@ function App(): JSX.Element {
         />
       )}
       {view === 'simulation' && <SimulationView onBack={() => setView('builder')} />}
-      {view === 'analysis' && <Placeholder title="Analysis" onBack={() => setView('splash')} />}
+      {view === 'analysis' && <AnalysisView onBack={() => setView('splash')} />}
       {view === 'docs' && <DocumentationView onBack={() => setView('splash')} />}
+
+      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
     </div>
   )
 }
@@ -27,9 +34,10 @@ function App(): JSX.Element {
 // ─── Splash Screen ────────────────────────────────────────────────────────────
 interface SplashScreenProps {
   onNavigate: (view: View) => void
+  onOpenSettings: () => void
 }
 
-function SplashScreen({ onNavigate }: SplashScreenProps): JSX.Element {
+function SplashScreen({ onNavigate, onOpenSettings }: SplashScreenProps): JSX.Element {
   return (
     <div style={styles.splash}>
       <div style={styles.splashInner}>
@@ -75,8 +83,15 @@ function SplashScreen({ onNavigate }: SplashScreenProps): JSX.Element {
         {/* Footer */}
         <div style={styles.footer}>
           <span style={{ color: 'var(--text-muted)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
-            Phase 0 — Foundation Complete · v0.1.0
+            SpaceRocket Aerospace Platform · v1.0.0
           </span>
+          <button
+            className="btn-ghost"
+            onClick={onOpenSettings}
+            style={{ fontSize: 12, padding: '4px 10px' }}
+          >
+            ⚙️ Settings
+          </button>
         </div>
       </div>
     </div>
@@ -114,19 +129,6 @@ function NavCard({ icon, title, description, accent, onClick }: NavCardProps): J
       </div>
       <div style={styles.navCardDesc}>{description}</div>
     </button>
-  )
-}
-
-// ─── Placeholder View ─────────────────────────────────────────────────────────
-function Placeholder({ title, onBack }: { title: string; onBack: () => void }): JSX.Element {
-  return (
-    <div style={{ ...styles.splash, gap: 24 }}>
-      <div style={{ ...styles.logoText, fontSize: 24 }}>{title}</div>
-      <p style={{ color: 'var(--text-muted)' }}>Coming in a future phase.</p>
-      <button className="btn-secondary" onClick={onBack}>
-        ← Back
-      </button>
-    </div>
   )
 }
 

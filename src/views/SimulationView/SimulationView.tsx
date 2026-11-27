@@ -12,11 +12,36 @@ interface SimulationViewProps {
 
 export const SimulationView: React.FC<SimulationViewProps> = ({ onBack }) => {
   const { currentDesign } = useRocketStore();
-  const { latestFrame, timeScale, state, pushTelemetry, pushEvent, resetSimulation, setState } = useSimulationStore();
+  const { latestFrame, timeScale, state, pushTelemetry, pushEvent, resetSimulation, setState, setTimeScale } = useSimulationStore();
   const { activeCelestialBody } = useMissionStore();
 
   const workerRef = useRef<Worker | null>(null);
   const design = currentDesign || ROCKET_PRESETS[1]; // Zephyr-1 default
+
+  // Keyboard shortcuts: Space (Pause/Resume), G (Stage), 1-6 (Time Scale)
+  useEffect(() => {
+    const scaleMap: Record<string, 1 | 2 | 4 | 8 | 16 | 32> = {
+      '1': 1,
+      '2': 2,
+      '3': 4,
+      '4': 8,
+      '5': 16,
+      '6': 32
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setState(state === 'paused' ? 'running' : 'paused');
+      } else if (e.key === 'g' || e.key === 'G') {
+        workerRef.current?.postMessage({ type: 'STAGE' });
+      } else if (scaleMap[e.key]) {
+        setTimeScale(scaleMap[e.key]);
+        setState('running');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [state, setState, setTimeScale]);
 
   useEffect(() => {
     // 1. Instantiate the Simulation Web Worker

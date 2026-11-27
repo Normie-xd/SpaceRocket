@@ -5,6 +5,15 @@
 
 ---
 
+## 📚 Integrated Documentation & Completed Reference
+
+- **Completed Project Summary:** [SPACEROCKET_COMPLETED.md](./SPACEROCKET_COMPLETED.md)
+- **Project Setup & Overview:** [README.md](./README.md)
+- **In-App Knowledge Base & Specs:** [src/views/DocumentationView/docsData.ts](./src/views/DocumentationView/docsData.ts)
+- **Documentation UI Component:** [src/views/DocumentationView/DocumentationView.tsx](./src/views/DocumentationView/DocumentationView.tsx)
+
+---
+
 ## 🎯 Vision & Scope
 
 **What it is:**
